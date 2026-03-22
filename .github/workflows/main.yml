@@ -9,10 +9,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
 
@@ -26,33 +26,26 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-         name: bandit-findings
-         path: bandit-report.json
-          
-  Image_scan:
-    name: Build docker image and Run scan image
+          name: bandit-findings
+          path: bandit-report.json
+
+  image_scan:
+    name: Build docker image and scan
     runs-on: ubuntu-latest
 
     steps:
-        - name: Checkout Code
-          uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-        - name: Create daemon.json
-          run: sudo mkdir -p /etc/docker && echo '{}' | sudo tee /etc/docker/daemon.json
-          
-        - name: Set up Docker
-          uses: docker-practice/actions-setup-docker@v1
-          with:
-            docker_version: '20.10.7'
+      - name: Build Docker Image
+        run: docker build -t myapp:latest .
 
-        - name: Build Docker Image
-          run: docker build -f Dockerfile -t myapp:latest .
+      - name: Install Docker Scout
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+          sh install-scout.sh
 
-        - name: Docker Scout scan
-          run: |
-            curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-            sh install-scout.sh
-            echo ${{ secrets.REPO_PWD }} | docker login -u ${{ secrets.REPO_USER }} --password-stdin
-            docker scout quickview
-            docker scout cves
-    
+      - name: Scan Image
+        run: |
+          docker scout quickview myapp:latest
+          docker scout cves myapp:latest
