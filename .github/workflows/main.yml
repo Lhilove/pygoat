@@ -36,6 +36,9 @@ jobs:
     steps:
         - name: Checkout Code
           uses: actions/checkout@v2
+
+        - name: Create daemon.json
+          run: sudo mkdir -p /etc/docker && echo '{}' | sudo tee /etc/docker/daemon.json
           
         - name: Set up Docker
           uses: docker-practice/actions-setup-docker@v1
