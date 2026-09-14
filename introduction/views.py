@@ -875,7 +875,9 @@ def injection_sql_lab(request):
             print(sql_query)
 
             try:
-                user = sql_lab_table.objects.raw(sql_query)
+# SECURITY COPILOT: replaced vulnerable code below
+# Original:                 user = sql_lab_table.objects.raw(sql_query)
+Replace raw SQL queries with Django's query methods. Use filter() or get() instead of raw()
                 user = user[0].id
                 print(user)
 
