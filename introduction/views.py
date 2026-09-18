@@ -159,7 +159,9 @@ def sql_lab(request):
                 print(sql_query)
                 try:
                     print("\nin try\n")
-                    val=login.objects.raw(sql_query)
+# SECURITY COPILOT: replaced vulnerable code below
+# Original:                     val=login.objects.raw(sql_query)
+cursor.execute("SELECT * FROM table WHERE id = %s", [user_input])
                 except:
                     print("\nin except\n")
                     return render(
