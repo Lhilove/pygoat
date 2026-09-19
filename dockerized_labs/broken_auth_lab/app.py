@@ -120,4 +120,6 @@ def dashboard():
     return redirect(url_for('lab'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)  # Vulnerable: Debug mode enabled in production 
+# SECURITY COPILOT: replaced vulnerable code below
+# Original:     app.run(host='0.0.0.0', port=5000, debug=True)  # Vulnerable: Debug mode enabled in production 
+app.run(debug=False)
